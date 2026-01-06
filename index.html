@@ -45,7 +45,6 @@
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
             z-index: 10;
-            /* Transitions removed to allow for frame-by-frame sweep movement without 'back-spinning' */
             will-change: transform;
         }
 
@@ -137,9 +136,40 @@
         .dots {
             animation: pulse 1s infinite;
         }
+
+        /* Fullscreen Button Styling */
+        #fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.2s ease;
+        }
+
+        #fullscreen-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+        }
     </style>
 </head>
 <body class="p-8 lg:p-12">
+
+    <!-- Fullscreen Toggle Button -->
+    <button id="fullscreen-btn" title="Toggle Fullscreen">
+        <svg id="fs-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+        </svg>
+    </button>
 
     <!-- TOP SECTION -->
     <div class="flex-[3] grid grid-cols-2 gap-10 items-center overflow-hidden">
@@ -195,6 +225,32 @@
                 container.appendChild(mark);
             }
         }
+
+        // --- FULLSCREEN LOGIC ---
+        const fsBtn = document.getElementById('fullscreen-btn');
+        fsBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        });
+
+        // Update icon based on fullscreen state
+        document.addEventListener('fullscreenchange', () => {
+            const icon = document.getElementById('fs-icon');
+            if (document.fullscreenElement) {
+                // Exit fullscreen icon
+                icon.innerHTML = '<path d="M4 14h6m0 0v6m0-6L3 21m17-7h-6m0 0v6m0-6 7 7M4 10h6m0 0V4m0 6L3 3m17 7h-6m0 0V4m0 6 7-7"></path>';
+            } else {
+                // Enter fullscreen icon
+                icon.innerHTML = '<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>';
+            }
+        });
 
         // --- NEW SWEEP ANIMATION LOGIC ---
         let lastSecond = -1;
