@@ -16,14 +16,43 @@
             height: 100vh;
             margin: 0;
             display: flex;
+            flex-direction: row;
+        }
+
+        /* Main Dashboard Content */
+        #main-content {
+            flex: 1;
+            display: flex;
             flex-direction: column;
+            height: 100vh;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            min-width: 0; 
+        }
+
+        /* Side Panel Styling */
+        #side-panel {
+            width: 0;
+            height: 100vh;
+            background: #111;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 0px solid #333;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #side-panel.open {
+            width: 30vw; 
+            min-width: 400px;
+            border-left: 1px solid #333;
         }
 
         /* Analog Clock Styling */
         #clock-wrapper {
             position: relative;
-            width: 420px;
-            height: 420px;
+            width: 380px;
+            height: 380px;
             flex-shrink: 0;
         }
 
@@ -36,7 +65,6 @@
             box-shadow: 0 0 50px rgba(255, 255, 255, 0.05);
         }
 
-        /* Hand Base Styles */
         .hand {
             position: absolute;
             bottom: 50%;
@@ -48,164 +76,169 @@
             will-change: transform;
         }
 
-        .hour-hand {
-            width: 10px;
-            height: 100px;
-            background: #fff;
-            margin-left: -5px;
-        }
-
-        .min-hand {
-            width: 6px;
-            height: 150px;
-            background: #aaa;
-            margin-left: -3px;
-        }
-
-        .second-hand {
-            width: 2px;
-            height: 180px;
-            background: #ff3b30;
-            z-index: 11;
-            margin-left: -1px;
-        }
+        .hour-hand { width: 10px; height: 90px; background: #fff; margin-left: -5px; }
+        .min-hand { width: 6px; height: 140px; background: #aaa; margin-left: -3px; }
+        .second-hand { width: 2px; height: 170px; background: #ff3b30; z-index: 11; margin-left: -1px; }
 
         .center-dot {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: #ff3b30;
-            border-radius: 50%;
-            z-index: 12;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: absolute; width: 16px; height: 16px; background: #ff3b30;
+            border-radius: 50%; z-index: 12; top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
 
-        /* Perfect Circular Markings */
         .marking {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 2px;
-            height: 18px;
-            background: #444;
-            transform-origin: center 190px; 
-            margin-top: -190px; 
-            margin-left: -1px;
+            position: absolute; top: 50%; left: 50%; width: 2px; height: 16px;
+            background: #444; transform-origin: center 170px; margin-top: -170px; margin-left: -1px;
         }
 
-        .marking.major {
-            height: 30px;
-            width: 6px;
-            background: #888;
-            margin-left: -3px;
+        .marking.major { height: 28px; width: 6px; background: #888; margin-left: -3px; }
+
+        /* Digital Clock Container */
+        #digital-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+            min-width: 0;
+            padding-right: 5vw;
         }
 
-        /* Digital Clock Typography */
         #digital-clock {
             font-family: 'JetBrains Mono', monospace;
-            font-size: clamp(6rem, 14vw, 12rem); 
+            font-size: clamp(4rem, 10vw, 11rem); 
             font-weight: 700;
             line-height: 1;
             letter-spacing: -0.05em;
             white-space: nowrap;
+            transition: all 0.4s ease;
         }
 
-        .weather-icon {
-            width: 64px;
-            height: 64px;
-            fill: currentColor;
+        #main-content.panel-open #digital-clock {
+            font-size: clamp(3rem, 7.5vw, 7.5rem);
         }
 
-        .forecast-card {
-            background: rgba(255, 255, 255, 0.03);
+        .weather-icon { width: 64px; height: 64px; fill: currentColor; }
+        
+        .forecast-card { 
+            background: rgba(255, 255, 255, 0.03); 
             border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .current-weather-box {
-            border-right: 1px solid #222;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
-
-        .dots {
-            animation: pulse 1s infinite;
-        }
-
-        /* Fullscreen Button Styling */
-        #fullscreen-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.3);
-            width: 44px;
-            height: 44px;
-            border-radius: 8px;
+            height: 100%;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            transition: all 0.2s ease;
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+        
+        .current-weather-box { border-right: 1px solid #222; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .dots { animation: pulse 1s infinite; }
+
+        .action-bar { position: absolute; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 100; }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3); width: 44px; height: 44px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;
         }
 
-        #fullscreen-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.8);
+        .icon-btn:hover { background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.8); }
+        .icon-btn.active { color: #fff; background: rgba(255, 255, 255, 0.2); border-color: #fff; }
+        
+        /* Brand Colors */
+        .icon-btn.twitch:hover { color: #9146ff; border-color: rgba(145, 70, 255, 0.5); }
+        .icon-btn.spotify:hover { color: #1DB954; border-color: rgba(29, 185, 84, 0.5); }
+        .icon-btn.ventusky:hover { color: #3b82f6; border-color: rgba(59, 130, 246, 0.5); }
+
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9); color: black; padding: 12px 24px;
+            border-radius: 30px; font-weight: 600; opacity: 0; transition: opacity 0.3s ease;
+            pointer-events: none; z-index: 200;
         }
     </style>
 </head>
-<body class="p-8 lg:p-12">
+<body>
 
-    <!-- Fullscreen Toggle Button -->
-    <button id="fullscreen-btn" title="Toggle Fullscreen">
-        <svg id="fs-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
-        </svg>
-    </button>
+    <div id="toast">Opening Spotify...</div>
 
-    <!-- TOP SECTION -->
-    <div class="flex-[3] grid grid-cols-2 gap-10 items-center overflow-hidden">
-        <div class="flex justify-center items-center">
-            <div id="clock-wrapper">
-                <div id="clock-face">
-                    <div id="markings-container" class="absolute inset-0"></div>
-                    <div class="center-dot"></div>
-                    <div id="hour-hand" class="hand hour-hand"></div>
-                    <div id="min-hand" class="hand min-hand"></div>
-                    <div id="second-hand" class="hand second-hand"></div>
+    <!-- Main Content Wrapper -->
+    <div id="main-content" class="p-8 lg:p-12">
+        <div class="action-bar">
+            <!-- Ventusky Button -->
+            <button id="ventusky-btn" class="icon-btn ventusky" title="Toggle Ventusky Weather Map">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+            </button>
+            <!-- Twitch Button -->
+            <button id="twitch-btn" class="icon-btn twitch" title="Open Twitch in Panel">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
+                </svg>
+            </button>
+            <!-- Spotify Button -->
+            <button id="spotify-btn" class="icon-btn spotify" title="Open Spotify">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.508 17.302c-.216.354-.675.466-1.028.249-2.854-1.744-6.447-2.138-10.683-1.171-.405.092-.813-.16-.905-.565-.092-.404.161-.812.566-.904 4.591-1.05 8.563-.598 11.782 1.365.353.216.465.675.248 1.026zm1.474-3.26c-.273.443-.852.585-1.296.312-3.267-2.008-8.247-2.592-12.11-1.419-.496.15-1.022-.128-1.173-.625-.15-.496.128-1.022.625-1.172 4.417-1.34 9.914-.686 13.642 1.608.444.272.586.852.312 1.296zm.126-3.414c-3.92-2.328-10.386-2.544-14.135-1.406-.602.183-1.238-.163-1.42-.765-.183-.602.163-1.238.765-1.42 4.295-1.304 11.43-1.052 15.952 1.631.541.32.718 1.022.398 1.562-.32.541-1.022.718-1.562.398z"/>
+                </svg>
+            </button>
+            <button id="fullscreen-btn" class="icon-btn" title="Toggle Fullscreen">
+                <svg id="fs-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- TOP SECTION -->
+        <div class="flex-[3] flex flex-row items-center justify-between overflow-hidden gap-10">
+            <div class="flex-none flex justify-center items-center pl-10">
+                <div id="clock-wrapper">
+                    <div id="clock-face">
+                        <div id="markings-container" class="absolute inset-0"></div>
+                        <div class="center-dot"></div>
+                        <div id="hour-hand" class="hand hour-hand"></div>
+                        <div id="min-hand" class="hand min-hand"></div>
+                        <div id="second-hand" class="hand second-hand"></div>
+                    </div>
                 </div>
+            </div>
+
+            <div id="digital-side" class="overflow-hidden">
+                <div id="digital-clock" class="text-white">00:00</div>
+                <div id="current-date" class="text-2xl lg:text-4xl font-light text-gray-400 mt-2 lg:mt-4 tracking-widest uppercase text-right">---, --- --</div>
             </div>
         </div>
 
-        <div class="flex flex-col items-center pr-6 lg:pr-10 overflow-hidden">
-            <div id="digital-clock" class="text-white">00:00</div>
-            <div id="current-date" class="text-2xl lg:text-4xl font-light text-gray-400 mt-2 lg:mt-4 tracking-widest uppercase text-right">
-                ---, --- --
+        <!-- BOTTOM SECTION -->
+        <div class="flex-1 mt-8 grid grid-cols-12 gap-6 items-stretch border-t border-white/10 pt-8 w-full">
+            <div class="col-span-4 current-weather-box flex items-center justify-center space-x-6 p-4">
+                <div id="current-weather-icon" class="text-blue-400"></div>
+                <div>
+                    <div id="current-temp" class="text-5xl lg:text-7xl font-bold leading-none">--°</div>
+                    <div id="current-desc" class="text-xl lg:text-2xl text-gray-400 font-light mt-1 text-ellipsis overflow-hidden">---</div>
+                    <div id="current-extremes" class="text-lg text-gray-500 font-medium">H: --° L: --°</div>
+                </div>
+            </div>
+            <div id="forecast-container" class="col-span-8 grid grid-cols-5 gap-4">
+                <!-- Cards injected here -->
             </div>
         </div>
     </div>
 
-    <!-- BOTTOM SECTION -->
-    <div class="flex-1 mt-8 grid grid-cols-12 gap-4 items-stretch border-t border-white/10 pt-8">
-        <div class="col-span-4 current-weather-box flex items-center justify-center space-x-6 p-4">
-            <div id="current-weather-icon" class="text-blue-400"></div>
-            <div>
-                <div id="current-temp" class="text-6xl lg:text-8xl font-bold leading-none">--°</div>
-                <div id="current-desc" class="text-xl lg:text-2xl text-gray-400 font-light mt-1">---</div>
-                <div id="current-extremes" class="text-lg text-gray-500 font-medium">H: --° L: --°</div>
-            </div>
+    <!-- Side Panel (Right) -->
+    <div id="side-panel">
+        <div class="p-3 border-b border-white/10 flex justify-between items-center bg-black">
+            <span id="panel-title" class="text-xs font-bold text-gray-500 uppercase tracking-widest pl-2">Panel</span>
+            <button id="close-panel" class="text-gray-500 hover:text-white p-2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
         </div>
-        <div class="col-span-8 grid grid-cols-5 gap-3">
-            <div id="forecast-container" class="contents"></div>
-        </div>
+        <iframe id="side-iframe" src="about:blank" class="flex-1 w-full border-none" allow="autoplay; encrypted-media"></iframe>
     </div>
 
     <script>
@@ -226,19 +259,74 @@
             }
         }
 
-        // --- FULLSCREEN LOGIC ---
         const fsBtn = document.getElementById('fullscreen-btn');
         fsBtn.addEventListener('click', () => {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
-                });
+                document.documentElement.requestFullscreen();
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
+                document.exitFullscreen();
             }
         });
+
+        // --- BUTTONS & PANEL ---
+        const vBtn = document.getElementById('ventusky-btn');
+        const tBtn = document.getElementById('twitch-btn');
+        const sBtn = document.getElementById('spotify-btn');
+        const toast = document.getElementById('toast');
+        const mainContent = document.getElementById('main-content');
+        const sidePanel = document.getElementById('side-panel');
+        const sideIframe = document.getElementById('side-iframe');
+        const closePanel = document.getElementById('close-panel');
+        const panelTitle = document.getElementById('panel-title');
+
+        let currentActive = null;
+
+        function closePanelFn() {
+            sidePanel.classList.remove('open');
+            mainContent.classList.remove('panel-open');
+            vBtn.classList.remove('active');
+            tBtn.classList.remove('active');
+            sideIframe.src = "about:blank";
+            currentActive = null;
+        }
+
+        function openPanel(type) {
+            sidePanel.classList.add('open');
+            mainContent.classList.add('panel-open');
+            
+            if (type === 'ventusky') {
+                panelTitle.innerText = "Wind Gusts Map";
+                sideIframe.src = "https://www.ventusky.com/wind-gusts-map/1-hour#p=11.6;122.4;4";
+                vBtn.classList.add('active');
+                tBtn.classList.remove('active');
+            } else if (type === 'twitch') {
+                panelTitle.innerText = "Twitch Browse";
+                // Note: Standard Twitch site often blocks iframes. 
+                // Using directory view as it's more likely to work or prompt login.
+                sideIframe.src = "https://www.twitch.tv/directory";
+                tBtn.classList.add('active');
+                vBtn.classList.remove('active');
+            }
+            currentActive = type;
+        }
+
+        vBtn.addEventListener('click', () => {
+            if (currentActive === 'ventusky') closePanelFn();
+            else openPanel('ventusky');
+        });
+
+        tBtn.addEventListener('click', () => {
+            if (currentActive === 'twitch') closePanelFn();
+            else openPanel('twitch');
+        });
+
+        sBtn.addEventListener('click', () => {
+            toast.style.opacity = "1";
+            setTimeout(() => { toast.style.opacity = "0"; }, 3000);
+            window.open('https://open.spotify.com', '_blank');
+        });
+
+        closePanel.addEventListener('click', closePanelFn);
 
         document.addEventListener('fullscreenchange', () => {
             const icon = document.getElementById('fs-icon');
@@ -251,7 +339,6 @@
 
         // --- CLOCK ANIMATION ---
         let lastSecond = -1;
-
         function animateClock() {
             const now = new Date();
             const ms = now.getMilliseconds();
@@ -271,49 +358,35 @@
                 const hStr = hr.toString().padStart(2, '0');
                 const mStr = min.toString().padStart(2, '0');
                 document.getElementById('digital-clock').innerHTML = `${hStr}<span class="dots text-gray-600">:</span>${mStr}`;
-
                 const options = { weekday: 'short', month: 'short', day: '2-digit' };
                 document.getElementById('current-date').innerText = now.toLocaleDateString('en-US', options);
-                
                 lastSecond = sec;
             }
-
             requestAnimationFrame(animateClock);
         }
 
-        // --- DYNAMIC WEATHER LOGIC ---
-        const weatherIconsList = ['sunny', 'cloudy', 'rain', 'thunder'];
-
         function renderWeather() {
             const now = new Date();
-            
-            // Current Weather
             document.getElementById('current-temp').innerText = `24°`;
             document.getElementById('current-desc').innerText = "Partly Cloudy";
             document.getElementById('current-extremes').innerText = "H: 28° L: 19°";
             document.getElementById('current-weather-icon').innerHTML = icons['cloudy'];
 
-            // Dynamic 5-Day Forecast
             const container = document.getElementById('forecast-container');
             container.innerHTML = '';
-
             const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
             
             for (let i = 1; i <= 5; i++) {
                 const forecastDate = new Date();
                 forecastDate.setDate(now.getDate() + i);
                 const dayLabel = dayNames[forecastDate.getDay()];
-                
-                // Deterministic mock data based on the day of the week
-                const mockIcon = weatherIconsList[(forecastDate.getDay()) % weatherIconsList.length];
-                const mockTemp = 20 + (forecastDate.getDay() % 8);
-
+                const mockIcon = ['sunny', 'cloudy', 'rain', 'thunder'][(forecastDate.getDay()) % 4];
                 const card = document.createElement('div');
-                card.className = "forecast-card flex flex-col items-center justify-center p-4 rounded-xl";
+                card.className = "forecast-card";
                 card.innerHTML = `
-                    <div class="text-lg lg:text-xl font-semibold mb-2 text-gray-400">${dayLabel}</div>
-                    <div class="mb-2 scale-75 lg:scale-100">${icons[mockIcon]}</div>
-                    <div class="text-2xl lg:text-3xl font-bold">${mockTemp}°</div>
+                    <div class="text-xs lg:text-sm font-semibold mb-2 text-gray-400">${dayLabel}</div>
+                    <div class="mb-2 scale-75">${icons[mockIcon]}</div>
+                    <div class="text-lg lg:text-xl font-bold">${20 + (forecastDate.getDay() % 8)}°</div>
                 `;
                 container.appendChild(card);
             }
@@ -323,8 +396,6 @@
             initClockMarkings();
             renderWeather();
             requestAnimationFrame(animateClock);
-
-            // Re-render weather forecast every hour to keep "Day 1" fresh
             setInterval(renderWeather, 3600000);
         };
     </script>
