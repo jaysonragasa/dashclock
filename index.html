@@ -92,7 +92,7 @@
 
         .marking.major { height: 28px; width: 6px; background: #888; margin-left: -3px; }
 
-        /* Digital Clock Container */
+        /* Digital Clock Container - Fixed dynamic sizing */
         #digital-side {
             flex: 1;
             display: flex;
@@ -100,21 +100,28 @@
             align-items: flex-end;
             justify-content: center;
             min-width: 0;
-            padding-right: 5vw;
+            padding: 0 4vw;
+            height: 100%;
+        }
+
+        #digital-clock-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
         }
 
         #digital-clock {
             font-family: 'JetBrains Mono', monospace;
-            font-size: clamp(4rem, 10vw, 11rem); 
             font-weight: 700;
-            line-height: 1;
+            line-height: 0.85;
             letter-spacing: -0.05em;
             white-space: nowrap;
-            transition: all 0.4s ease;
         }
 
-        #main-content.panel-open #digital-clock {
-            font-size: clamp(3rem, 7.5vw, 7.5rem);
+        #current-date {
+            margin-top: 1rem;
+            white-space: nowrap;
         }
 
         .weather-icon { width: 64px; height: 64px; fill: currentColor; }
@@ -147,7 +154,6 @@
         .icon-btn:hover { background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.8); }
         .icon-btn.active { color: #fff; background: rgba(255, 255, 255, 0.2); border-color: #fff; }
         
-        /* Brand Colors */
         .icon-btn.twitch:hover { color: #9146ff; border-color: rgba(145, 70, 255, 0.5); }
         .icon-btn.spotify:hover { color: #1DB954; border-color: rgba(29, 185, 84, 0.5); }
         .icon-btn.ventusky:hover { color: #3b82f6; border-color: rgba(59, 130, 246, 0.5); }
@@ -162,7 +168,7 @@
 </head>
 <body>
 
-    <div id="toast">Opening Spotify...</div>
+    <div id="toast">Playlist Active</div>
 
     <!-- Main Content Wrapper -->
     <div id="main-content" class="p-8 lg:p-12">
@@ -182,7 +188,7 @@
                 </svg>
             </button>
             <!-- Spotify Button -->
-            <button id="spotify-btn" class="icon-btn spotify" title="Open Spotify">
+            <button id="spotify-btn" class="icon-btn spotify" title="Toggle Spotify Playlist">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.508 17.302c-.216.354-.675.466-1.028.249-2.854-1.744-6.447-2.138-10.683-1.171-.405.092-.813-.16-.905-.565-.092-.404.161-.812.566-.904 4.591-1.05 8.563-.598 11.782 1.365.353.216.465.675.248 1.026zm1.474-3.26c-.273.443-.852.585-1.296.312-3.267-2.008-8.247-2.592-12.11-1.419-.496.15-1.022-.128-1.173-.625-.15-.496.128-1.022.625-1.172 4.417-1.34 9.914-.686 13.642 1.608.444.272.586.852.312 1.296zm.126-3.414c-3.92-2.328-10.386-2.544-14.135-1.406-.602.183-1.238-.163-1.42-.765-.183-.602.163-1.238.765-1.42 4.295-1.304 11.43-1.052 15.952 1.631.541.32.718 1.022.398 1.562-.32.541-1.022.718-1.562.398z"/>
                 </svg>
@@ -196,6 +202,7 @@
 
         <!-- TOP SECTION -->
         <div class="flex-[3] flex flex-row items-center justify-between overflow-hidden gap-10">
+            <!-- Analog Container -->
             <div class="flex-none flex justify-center items-center pl-10">
                 <div id="clock-wrapper">
                     <div id="clock-face">
@@ -208,9 +215,12 @@
                 </div>
             </div>
 
-            <div id="digital-side" class="overflow-hidden">
-                <div id="digital-clock" class="text-white">00:00</div>
-                <div id="current-date" class="text-2xl lg:text-4xl font-light text-gray-400 mt-2 lg:mt-4 tracking-widest uppercase text-right">---, --- --</div>
+            <!-- Digital Side -->
+            <div id="digital-side">
+                <div id="digital-clock-container">
+                    <div id="digital-clock" class="text-white">00:00</div>
+                    <div id="current-date" class="text-gray-400 tracking-widest uppercase text-right">---, --- --</div>
+                </div>
             </div>
         </div>
 
@@ -238,7 +248,8 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
         </div>
-        <iframe id="side-iframe" src="about:blank" class="flex-1 w-full border-none" allow="autoplay; encrypted-media"></iframe>
+        <!-- Set height to 100% minus header -->
+        <iframe id="side-iframe" src="about:blank" class="flex-1 w-full border-none" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
 
     <script>
@@ -248,6 +259,33 @@
             rain: `<svg class="weather-icon text-blue-400" viewBox="0 0 24 24"><path d="M19.35,10.04C18.67,6.59,15.64,4,12,4C9.11,4,6.6,5.64,5.35,8.04C2.34,8.36,0,10.91,0,14c0,3.31,2.69,6,6,6h13 c2.76,0,5-2.24,5-5C24,12.36,21.95,10.22,19.35,10.04z M13,13v3h-2v-3H13z M17,13v3h-2v-3H17z M9,13v3H7v-3H9z"/></svg>`,
             thunder: `<svg class="weather-icon text-purple-400" viewBox="0 0 24 24"><path d="M19.35,10.04C18.67,6.59,15.64,4,12,4C9.11,4,6.6,5.64,5.35,8.04C2.34,8.36,0,10.91,0,14c0,3.31,2.69,6,6,6h13 c2.76,0,5-2.24,5-5C24,12.36,21.95,10.22,19.35,10.04z M9,21l3-3h-2l3-5l-3,3h2l-3,5z"/></svg>`
         };
+
+        // --- SMART DYNAMIC RESIZING LOGIC ---
+        function fitText() {
+            const clock = document.getElementById('digital-clock');
+            const date = document.getElementById('current-date');
+            const container = document.getElementById('digital-side');
+            if (!clock || !container) return;
+            
+            const maxWidth = container.offsetWidth * 0.85;
+            const maxHeight = container.offsetHeight * 0.7;
+
+            let fontSize = 450; 
+            clock.style.fontSize = fontSize + 'px';
+
+            // Fast reduce loop
+            while ((clock.offsetWidth > maxWidth || clock.offsetHeight > maxHeight) && fontSize > 20) {
+                fontSize -= (fontSize > 100 ? 5 : 2);
+                clock.style.fontSize = fontSize + 'px';
+            }
+
+            date.style.fontSize = (fontSize * 0.22) + 'px';
+        }
+
+        const resizeObserver = new ResizeObserver(() => {
+            fitText();
+        });
+        resizeObserver.observe(document.getElementById('digital-side'));
 
         function initClockMarkings() {
             const container = document.getElementById('markings-container');
@@ -261,18 +299,14 @@
 
         const fsBtn = document.getElementById('fullscreen-btn');
         fsBtn.addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
-            } else {
-                document.exitFullscreen();
-            }
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else document.exitFullscreen();
         });
 
-        // --- BUTTONS & PANEL ---
+        // --- PANEL LOGIC ---
         const vBtn = document.getElementById('ventusky-btn');
         const tBtn = document.getElementById('twitch-btn');
         const sBtn = document.getElementById('spotify-btn');
-        const toast = document.getElementById('toast');
         const mainContent = document.getElementById('main-content');
         const sidePanel = document.getElementById('side-panel');
         const sideIframe = document.getElementById('side-iframe');
@@ -286,6 +320,7 @@
             mainContent.classList.remove('panel-open');
             vBtn.classList.remove('active');
             tBtn.classList.remove('active');
+            sBtn.classList.remove('active');
             sideIframe.src = "about:blank";
             currentActive = null;
         }
@@ -294,18 +329,21 @@
             sidePanel.classList.add('open');
             mainContent.classList.add('panel-open');
             
+            // Sync active button states
+            vBtn.classList.toggle('active', type === 'ventusky');
+            tBtn.classList.toggle('active', type === 'twitch');
+            sBtn.classList.toggle('active', type === 'spotify');
+
             if (type === 'ventusky') {
                 panelTitle.innerText = "Wind Gusts Map";
                 sideIframe.src = "https://www.ventusky.com/wind-gusts-map/1-hour#p=11.6;122.4;4";
-                vBtn.classList.add('active');
-                tBtn.classList.remove('active');
             } else if (type === 'twitch') {
-                panelTitle.innerText = "Twitch Browse";
-                // Note: Standard Twitch site often blocks iframes. 
-                // Using directory view as it's more likely to work or prompt login.
+                panelTitle.innerText = "Twitch Directory";
                 sideIframe.src = "https://www.twitch.tv/directory";
-                tBtn.classList.add('active');
-                vBtn.classList.remove('active');
+            } else if (type === 'spotify') {
+                panelTitle.innerText = "Spotify Playlist";
+                // Converting standard playlist URL to Embed format for iframe compatibility
+                sideIframe.src = "https://open.spotify.com/embed/playlist/37i9dQZF1DWZKNkQDWII13?utm_source=generator&theme=0";
             }
             currentActive = type;
         }
@@ -321,9 +359,8 @@
         });
 
         sBtn.addEventListener('click', () => {
-            toast.style.opacity = "1";
-            setTimeout(() => { toast.style.opacity = "0"; }, 3000);
-            window.open('https://open.spotify.com', '_blank');
+            if (currentActive === 'spotify') closePanelFn();
+            else openPanel('spotify');
         });
 
         closePanel.addEventListener('click', closePanelFn);
@@ -397,6 +434,7 @@
             renderWeather();
             requestAnimationFrame(animateClock);
             setInterval(renderWeather, 3600000);
+            setTimeout(fitText, 100); 
         };
     </script>
 </body>
